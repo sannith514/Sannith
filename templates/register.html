@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/login.css">
+    <title>Register</title>
+</head>
+<body style="background-image: url('{{ url_for('static', filename='pageimages/background.png') }}');">
+      
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <script>
+                window.setTimeout(function() {
+                    var alerts = document.querySelectorAll('.alert');
+                    alerts.forEach(function(alert) {
+                        alert.style.display = 'none';
+                    });
+                }, 5000);
+            </script>
+        {% endif %}
+    {% endwith %}
+    
+    <form id="registerForm" action="/register" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+
+        <button type="submit">Register</button>
+
+        <a href="/login">Click here to Login</a>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

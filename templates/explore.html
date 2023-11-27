@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/#home"><i class="fa-solid fa-house" style="margin-right: 5px;"></i>Home</a></li>
+                <li><a href="/#explore"><i class="fa-solid fa-book-open"style="margin-right: 5px;"></i>Explore Library</a></li>
+                <li><a href="/#contribute"><i class="fa-solid fa-book-bookmark"style="margin-right: 5px;"></i>Contribute</a></li>
+                <li><a href="/#about"><i class="fa-solid fa-circle-info"style="margin-right: 5px;"></i>About Us</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"style="margin-right: 5px;"></i>Logout</a></li>
+                {% else %}
+                    <li><a href="/login"><i class="fa-solid fa-user"style="margin-right: 5px;"></i>Login/Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            window.setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 5000);
+        </script>
+    {% endif %}
+    {% endwith %}
+
+    <main class="explore-library" style="background-image: url('{{ url_for('static', filename='pageimages/background.png') }}');">
+        <div class="search-sort-filter">
+            <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
+            <select id="genreOptions" onchange="searchBooks()">
+                <option value="">All Genres</option>
+                {% for genre in genres %}
+                <option value="{{ genre }}">{{ genre }}</option>
+                {% endfor %}
+            </select>
+            
+            <select id="sortOptions" onchange="sortBooks()">
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+                <option value="publish_date">Publish Date</option>
+            </select>
+        </div>
+        <div class="books-container">
+            {% for book in books %}
+            <div class="book-card">
+                <img src="{{ url_for('static', filename='images/' + book.image_filename) }}" alt="{{ book.title }}">
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <p class="Genre"><b>Genre: </b> {{ book.genre }}</p>
+                    <p class="PublishDate"><b>Published:</b> {{ book.publish_date }}</p>
+                    <p class="isbn"><b>ISBN:</b> {{ book.isbn }}</p>
+                    <p class="description" style="display: none;"><b>Description:</b> {{ book.description }}</p>
+                    <p class="page_count" style="display: none;"><b>Page Count: </b>{{ book.page_count }}</p>
+                    <p class="language" style="display: none;"><b>Language:</b> {{ book.language }}</p>
+                </div>
+                <div class="book-actions">
+                    {% if current_user.is_authenticated %}
+                        {% if book.is_available %}
+                            <a href="{{ url_for('borrow') }}" class="borrow-btn">Borrow</a>
+                        {% else %}
+                            <button class="borrow-btn unavailable" disabled>Not Available</button>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="borrow-btn">Login to Borrow</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+     
+    <div id="bookModal" class="book-modal">
+        <center>
+            <div class="book-modal-content">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <div class="book-modal-body">
+                    <img id="modalBookImage" src="" alt="Book Image" class="book-modal-image">
+                    <div class="book-modal-info">
+                        <h2 id="modalBookTitle"></h2>
+                        <p id="modalBookAuthor"></p>
+                        <p id="modalBookGenre"></p>
+                        <p id="modalBookPublished"></p>
+                        <p id="modalBookIsbn"></p>
+                        <p id="modalBookDescription"></p>
+                        <p id="modalBookPages"></p>
+                        <p id="modalBookLanguage"></p>
+                        <div class="book-actions">
+                            {% if current_user.is_authenticated %}
+                                {% if book in books %}
+                                    {% if book.is_available %}
+                                        <a class="borrow-btn">Borrow</a>
+                                    {% else %}
+                                        <button class="borrow-btn unavailable" disabled>Not Available</button>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="borrow-btn">Login to Borrow</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </center>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Flagstaff City-Coconino County Public Library</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

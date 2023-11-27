@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='pageimages/background.png') }}');">
+    <header class="admin-header">
+        <nav>
+            <ul>
+                <li><a href="/add_book" id="manageBooks"><i class="fa-solid fa-swatchbook"style="margin-right: 5px;"></i>Add Books</a></li>
+                <li><a href="/adminregister" id="borrowRequests"><i class="fa-solid fa-address-card"style="margin-right: 5px;"></i>Register an admin</a></li>
+                <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"style="margin-right: 5px;"></i>Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            window.setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 5000);
+        </script>
+    {% endif %}
+    {% endwith %}
+    <main class="explore-library" style="background-image: url('{{ url_for('static', filename='pageimages/background.png') }}');">
+        <h1>Manage Books - {{ books|length }} books available</h1>
+        <div class="search-sort-filter">
+            <input type="text" id="searchBar" placeholder="Search for books..." onkeyup="searchBooks()">
+            <select id="genreOptions" onchange="searchBooks()">
+                <option value="">All Genres</option>
+                <option value="Classic Fiction">Classic Fiction</option>
+                <option value="Dystopian Fiction">Dystopian Fiction</option>
+            </select>
+            <select id="sortOptions" onchange="sortBooks()">
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+                <option value="publish_date">Publish Date</option>
+            </select>
+        </div>
+        <div class="books-container">
+            {% for book in books %}
+            <div class="book-card">
+                <img src="{{ url_for('static', filename='images/' + book.image_filename) }}" alt="{{ book.title }}">
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <p class="Genre"><b>Genre: </b> {{ book.genre }}</p>
+                    <p class="PublishDate"><b>Published:</b> {{ book.publish_date }}</p>
+                    <p class="isbn"><b>ISBN:</b> {{ book.isbn }}</p>
+                    <p class="description" style="display: none;"><b>Description:</b> {{ book.description }}</p>
+                    <p class="page_count" style="display: none;"><b>Page Count: </b>{{ book.page_count }}</p>
+                    <p class="language" style="display: none;"><b>Language:</b> {{ book.language }}</p>
+                </div>
+                <div class="book-actions">
+                    <a class="borrow-btn" href="{{ url_for('edit_book', book_id=book.id) }}">Edit</a>
+                    <button class="delete-btn borrow-btn" onclick="confirmDelete('{{ url_for('delete_book', book_id=book.id) }}')">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Flagstaff City-Coconino County Public Library</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script>
+        function confirmDelete(deleteUrl) {
+            var confirmDelete = confirm('Are you sure you want to delete this book?');
+        
+            if (confirmDelete) {
+                fetch(deleteUrl, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload(); 
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
+</body>
+</html>

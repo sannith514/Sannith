@@ -1,0 +1,103 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    background-size: cover;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#loginForm, #registerForm {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+#loginForm label, #registerForm label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#loginForm input, #registerForm input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #6d7f7d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #5c6e6d;
+}
+
+#flash-messages {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    z-index: 2000;
+}
+
+.alert {
+    padding: 10px;
+    background-color: #f44336;
+    color: white;
+    opacity: 0.9;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+}
+
+.close {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close:hover {
+    color: black;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #6d7f7d;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
